@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxWink 3D</title>
+<style>
+body { margin:0; font-family:Arial, sans-serif; }
+header { background:#006b3f; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; }
+header .logo { font-size:24px; font-weight:bold; color:#ffd700; }
+header nav a { margin:0 12px; color:#fff; font-size:16px; }
+.hero { background:#f1eee6; padding:60px 20px; text-align:center; }
+.hero h1 { color:#006b3f; font-size:36px; margin-bottom:12px; }
+.hero button { background:#ffd700; color:#006b3f; border:none; padding:14px 24px; font-size:18px; border-radius:4px; cursor:pointer; }
+.section { padding:40px 20px; }
+.cards { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+.card { width:280px; background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); overflow:hidden; }
+.card img { width:100%; height:180px; object-fit:cover; }
+.card-content { padding:16px; }
+.card-content h3 { margin:0 0 8px; color:#006b3f; }
+.card-content p { margin:0 0 12px; font-size:14px; color:#555; }
+.card-content button { background:#006b3f; color:#fff; border:none; padding:10px 16px; border-radius:4px; cursor:pointer; }
+footer { background:#006b3f; color:#fff; padding:20px; text-align:center; font-size:14px; }
+
+#orderModal {
+  display:none;
+  position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);
+  justify-content:center; align-items:center;
+}
+#orderContent {
+  background:#fff; padding:20px; border-radius:8px; max-width:400px; width:90%;
+  text-align:center;
+}
+#orderContent input { padding:8px; width:90%; margin:10px 0; border-radius:5px; border:1px solid #ccc; }
+#orderContent button { padding:10px 16px; margin:5px; border:none; border-radius:5px; cursor:pointer; }
+#payButton { background:#4285f4; color:white; }
+#closeButton { background:#ccc; }
+#map { width:100%; height:400px; border-radius:8px; margin-top:20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">JESHROHN</div>
+  <nav>
+    <a href="#menu">MODELS</a>
+    <a href="#locations">THRISSUR</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>MAXWINK 3D MODELS</h1>
+  <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">3D </button>
+</section>
+
+<section id="menu" class="section">
+  <h2 style="text-align:center; color:#006b3f;">3D MODELS</h2>
+  <div class="cards" id="menuCards"></div>
+</section>
+
+<section id="locations" class="section" style="background:#f9f9f9;">
+  <h2 style="text-align:center; color:#006b3f;">Find a Location in the U.S.</h2>
+  <p style="text-align:center; max-width:600px; margin:0 auto;">Select your location or view nearby restaurants.</p>
+  <iframe
+    id="map"
+    src="https://www.google.com/maps/embed/v1/search?key=YOUR_API_KEY&q=texas+houston+USA"
+    allowfullscreen>
+  </iframe>
+</section>
+
+<section id="contact" class="section">
+  <h2 style="text-align:center; color:#006b3f;">Contact Us</h2>
+  <p style="text-align:center;">Email: info@maxwink.com<br>Phone: +12818185676</p>
+</section>
+
+<footer>
+  2025 MaxWink. Powered by JESHROHN
+</footer>
+
+<!-- Order Modal -->
+<div id="orderModal">
+  <div id="orderContent">
+    <h2>Place Your Order</h2>
+    <p>MAXWINK PRODUCT: <span id="orderSandwich"></span></p>
+    <input type="text" id="customerName" placeholder="Your Name">
+    <input type="text" id="customerCard" placeholder="Card Number">
+    <div>
+      <button id="payButton">Pay with Google Pay</button>
+      <button id="closeButton">Cancel</button>
+    </div>
+    <p id="orderMessage"></p>
+  </div>
+</div>
+
+<script>
+// Menu Data with real-looking images
+const menuData = [
+  {name:"CHARATERS", img:"https://images.unsplash.com/photo-1603072562021-2a94c3140b30?auto=format&fit=crop&w=280&q=80"},
+  {name:"HOMES", img:"https://images.unsplash.com/photo-1617196037998-50a16de7f47f?auto=format&fit=crop&w=280&q=80"},
+  {name:"DRESS", img:"https://images.unsplash.com/photo-1598866534761-1a0cd39d9f9a?auto=format&fit=crop&w=280&q=80"},
+  {name:"ANIMALS", img:"https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=280&q=80"},
+  {name:"SHOES", img:"https://images.unsplash.com/photo-1617196037998-50a16de7f47f?auto=format&fit=crop&w=280&q=80"},
+  {name:"PARKS", img:"https://images.unsplash.com/photo-1598514982850-1050c37430e3?auto=format&fit=crop&w=280&q=80"}
+];
+
+const menuCards = document.getElementById("menuCards");
+menuData.forEach(item=>{
+  const card = document.createElement("div");
+  card.className="card";
+  card.innerHTML=`
+    <img src="${item.img}" alt="${item.name}">
+    <div class="card-content">
+      <h3>${item.name}</h3>
+      <button onclick="openOrder('${item.name}')">Order Now</button>
+    </div>
+  `;
+  menuCards.appendChild(card);
+});
+
+const modal = document.getElementById("orderModal");
+const mode = document.getElementById("orderSandwich");
+const orderMessage = document.getElementById("orderMessage");
+
+function openOrder(sandwich) {
+  orderSandwich.textContent = sandwich;
+  orderMessage.textContent = '';
+  modal.style.display = 'flex';
+}
+
+document.getElementById("closeButton").onclick = () => modal.style.display='none';
+
+document.getElementById("payButton").onclick = () => {
+  const name = document.getElementById("customerName").value;
+  const card = document.getElementById("customerCard").value;
+  if(name && card){
+    orderMessage.textContent = `Payment successful! Thank you, ${name}. Your ${orderSandwich.textContent} will be ready soon.`;
+  } else {
+    orderMessage.textContent = 'Please enter your name and card number.';
+  }
+};
+</script>
+
+</body>
+</html>
